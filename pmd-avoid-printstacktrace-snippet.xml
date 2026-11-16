@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Paste the <rule .../> line below into your existing pmd-resource-leak.xml (inside <ruleset>).
+    It was not included in DS.zip, so this project does not overwrite it.
+    Flags any new X.printStackTrace() so the slf4j migration does not regress.
+-->
+<ruleset name="avoid-printstacktrace-snippet"
+         xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd">
+    <description>Snippet: forbid printStackTrace</description>
+    <rule ref="category/java/bestpractices.xml/AvoidPrintStackTrace"/>
+</ruleset>

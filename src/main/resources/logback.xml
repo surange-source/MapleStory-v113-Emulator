@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <!-- Console: everything at INFO and above, plus the target file name for FileErrorLog events -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} %-5level [%thread] %logger{20} %X{logfile} - %msg%n</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+    <!--
+        FileoutputUtil.log / outputFileError set the MDC key "logfile" to the path the caller passed in.
+        This appender writes each path to its own daily-rolling file, so the existing
+        FileoutputUtil.*_Log file names keep working unchanged (parent directories are created automatically).
+    -->
+    <appender name="FILES" class="ch.qos.logback.classic.sift.SiftingAppender">
+        <discriminator>
+            <key>logfile</key>
+            <defaultValue>Logs/Log_Misc.txt</defaultValue>
+        </discriminator>
+        <sift>
+            <appender name="FILE-${logfile}" class="ch.qos.logback.core.rolling.RollingFileAppender">
+                <file>${logfile}</file>
+                <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                    <fileNamePattern>${logfile}.%d{yyyy-MM-dd}</fileNamePattern>
+                    <maxHistory>30</maxHistory>
+                </rollingPolicy>
+                <encoder>
+                    <pattern>%d{yyyy-MM-dd HH:mm:ss} %-5level - %msg%n</pattern>
+                    <charset>UTF-8</charset>
+                </encoder>
+            </appender>
+        </sift>
+    </appender>
+
+    <!-- FileoutputUtil.log(...): file only (same as before, no console output) -->
+    <logger name="FileLog" level="INFO" additivity="false">
+        <appender-ref ref="FILES"/>
+    </logger>
+
+    <!-- FileoutputUtil.outputFileError(...): file + console (replaces the old printStackTrace next to it).
+         Names deliberately contain no dots: "FileLog.x" would inherit FileLog's additivity=false. -->
+    <logger name="FileErrorLog" level="INFO" additivity="true">
+        <appender-ref ref="FILES"/>
+    </logger>
+
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+    </root>
+
+</configuration>

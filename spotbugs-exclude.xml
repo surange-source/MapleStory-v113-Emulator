@@ -1,0 +1,66 @@
+<FindBugsFilter>
+    <!-- 按包排除 -->
+    <Match>
+        <Package name="~org\.apache\.mina\..*"/>
+    </Match>
+    <!-- 按已知安全的关闭工具方法排除 -->
+    <Match>
+        <Class name="com.example.maple.util.DbUtils"/>
+        <Method name="closeQuietly"/>
+    </Match>
+    <!-- 離線工具（wz 轉 SQL），不在伺服器執行路徑上 -->
+    <Match>
+        <Class name="~tools\.wztosql\..*"/>
+    </Match>
+    <Match>
+        <Bug pattern="ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD"/>
+    </Match>
+    <!-- ===== 1. 離線工具：不在伺服器執行路徑上，整包排除 ===== -->
+    <Match>
+        <Class name="~tools\.wztosql\..*"/>
+    </Match>
+
+    <!-- ===== 2. 命名規範：改名可能弄壞反射呼叫、腳本、中文指令類別名 ===== -->
+    <!-- 只排除這三個；NM_CONFUSING、NM_WRONG_PACKAGE 等可能是真 bug，保留 -->
+    <Match>
+        <Bug pattern="NM_CLASS_NAMING_CONVENTION,NM_METHOD_NAMING_CONVENTION,NM_FIELD_NAMING_CONVENTION"/>
+    </Match>
+
+    <!-- ===== 3. 封裝與可變性：內部程式碼，防禦性拷貝會增加熱路徑開銷 ===== -->
+    <Match>
+        <Bug pattern="PA_PUBLIC_PRIMITIVE_ATTRIBUTE,EI_EXPOSE_REP,EI_EXPOSE_REP2"/>
+    </Match>
+    <Match>
+        <Bug pattern="ME_MUTABLE_ENUM_FIELD,ME_ENUM_FIELD_SETTER"/>
+    </Match>
+    <Match>
+        <Bug pattern="MS_MUTABLE_ARRAY,MS_PKGPROTECT,MS_MUTABLE_COLLECTION_PKGPROTECT"/>
+    </Match>
+
+    <!-- ===== 4. 序列化：除非實際對這些類別做 Java 序列化，否則無影響 ===== -->
+    <Match>
+        <Bug pattern="SE_TRANSIENT_FIELD_NOT_RESTORED,SE_BAD_FIELD,MC_OVERRIDABLE_METHOD_CALL_IN_READ_OBJECT"/>
+    </Match>
+
+    <!-- ===== 5. 風格類 ===== -->
+    <!-- switch 沒有 default -->
+    <Match>
+        <Bug pattern="SF_SWITCH_NO_DEFAULT"/>
+    </Match>
+    <!-- 未讀取/未使用的欄位（UWF_UNWRITTEN_FIELD 可能是真 bug，不在此列） -->
+    <Match>
+        <Bug pattern="URF_UNREAD_FIELD,URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD,UUF_UNUSED_FIELD,UUF_UNUSED_PUBLIC_OR_PROTECTED_FIELD"/>
+    </Match>
+    <!-- catch NullPointerException、catch Exception、未呼叫的 private 方法 -->
+    <Match>
+        <Bug pattern="DCN_NULLPOINTER_EXCEPTION,REC_CATCH_EXCEPTION,UPM_UNCALLED_PRIVATE_METHOD"/>
+    </Match>
+    <!-- keySet 迭代效能、File.mkdirs()/createNewFile() 回傳值被忽略 -->
+    <Match>
+        <Bug pattern="WMI_WRONG_MAP_ITERATOR,RV_RETURN_VALUE_IGNORED_BAD_PRACTICE"/>
+    </Match>
+    <!-- 實例方法寫入靜態欄位：ShutdownServer 為刻意設計 -->
+    <Match>
+        <Bug pattern="ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD"/>
+    </Match>
+</FindBugsFilter>

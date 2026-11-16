@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<ruleset name="ResourceLeakRules"
+         xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0
+                             https://pmd.github.io/schema/ruleset_2_0_0.xsd">
+
+    <description>仅检测数据库资源泄漏（PMD 7.x）</description>
+
+    <!-- PMD 7.x: CloseResource 已从 errorprone 移到 bestpractices -->
+    <rule ref="category/java/errorprone.xml/CloseResource">
+        <properties>
+            <property name="types"
+                      value="java.sql.Connection,java.sql.Statement,java.sql.ResultSet"/>
+            <property name="closeTargets"
+                      value="closeQuietly,closeConnection,closeStatement,closeResultSet"/>
+        </properties>
+    </rule>
+
+    <rule ref="category/java/bestpractices.xml/UseTryWithResources"/>
+</ruleset>
